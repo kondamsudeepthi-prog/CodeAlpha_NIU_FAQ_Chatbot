@@ -1194,7 +1194,52 @@ def detect_intent(user_question):
 
 def find_best_match(user_question):
     """Hybrid + TF-IDF + semantic + lexical FAQ retrieval."""
+    # =========================================================
+    # EXACT FAQ MATCH
+    # =========================================================
 
+    normalized_query = re.sub(
+        r"[^a-z0-9\s]",
+        "",
+        user_question.lower()
+    )
+
+    normalized_query = re.sub(
+        r"\s+",
+        " ",
+        normalized_query
+    ).strip()
+
+    faq_questions_normalized = (
+        faq_df["question"]
+        .astype(str)
+        .str.lower()
+        .str.replace(
+            r"[^a-z0-9\s]",
+            "",
+            regex=True
+        )
+        .str.replace(
+            r"\s+",
+            " ",
+            regex=True
+        )
+        .str.strip()
+    )
+
+    exact_matches = faq_df[
+        faq_questions_normalized == normalized_query
+    ]
+
+    if not exact_matches.empty:
+        matched_index = exact_matches.index[0]
+
+        print(
+            "🔥 EXACT FAQ MATCH:",
+            faq_df.loc[matched_index, "question"]
+        )
+
+        return matched_index, 1.0
     # =========================================================
     # EXAMINATION EXACT MATCH ROUTER
     # =========================================================
