@@ -47,7 +47,7 @@ STOP_WORDS = load_nltk_resources()
 # LOAD UPDATED NIU DATASET
 # =========================================================
 
-DATASET_PATH = "Data/faqs.csv"
+DATASET_PATH = "data/faqs.csv"
 
 
 def load_faq_dataset():
