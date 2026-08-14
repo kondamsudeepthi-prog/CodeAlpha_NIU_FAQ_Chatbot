@@ -247,7 +247,7 @@ The chatbot can be further enhanced with:
   
 ## 👩‍💻 Author
 
-** Kondam Sudeepthi **
+**Kondam Sudeepthi**
 
 B.Tech CSE (Artificial Intelligence & Machine Learning)
 
