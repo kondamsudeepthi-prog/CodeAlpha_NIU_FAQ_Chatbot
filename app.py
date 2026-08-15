@@ -80,7 +80,7 @@ def load_faq_dataset():
     # Remove empty questions/answers
     df = df[
         (df["question"] != "") &
-        (df["answer"] != "")FF
+        (df["answer"] != "")
     ]
 
     # Remove exact duplicate questions
