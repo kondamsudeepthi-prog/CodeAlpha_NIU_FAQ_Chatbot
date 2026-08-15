@@ -1286,6 +1286,15 @@ def find_best_match(user_question):
 
     exam_mapping = {
 
+        "what examinations are conducted at niu":
+            "Are semester examinations conducted for all programmes?",
+
+        "what examinations are conducted in niu":
+            "Are semester examinations conducted for all programmes?",
+
+        "what exams are conducted at niu":
+            "Are semester examinations conducted for all programmes?",
+
         "where can i find examination schedules":
             "Where can I find NIU examination schedules?",
 
