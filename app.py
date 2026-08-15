@@ -312,6 +312,36 @@ INTENT_KEYWORDS = {
 QUERY_EXPANSIONS = {
 
     # ========================================================
+    # CAMPUS & FACILITIES - GENERAL
+    # ========================================================
+
+    "facilities": [
+        "facilities",
+        "facility",
+        "campus facilities",
+        "campus facility",
+        "campus",
+        "campus life",
+        "campus amenities",
+        "campus resources",
+        "university facilities",
+        "college facilities",
+        "facilities available",
+        "facilities at NIU",
+        "facilities in NIU",
+        "NIU facilities",
+        "NIU campus facilities",
+        "NIU campus",
+        "campus services",
+        "library",
+        "sports",
+        "cafeteria",
+        "gym",
+        "fitness",
+        "wifi"
+    ],
+    
+    # ========================================================
     # ADMISSIONS - GENERAL
     # ========================================================
 
@@ -1353,7 +1383,78 @@ def find_best_match(user_question):
             ):
                 return i, 1.0
     
-    
+    # =========================================================
+    # GENERAL EXAMINATION QUESTION ROUTER
+    # =========================================================
+
+    normalized_query = re.sub(
+        r"[^a-z0-9\s]",
+        "",
+        str(user_question).lower()
+    )
+    normalized_query = re.sub(
+        r"\s+",
+        " ",
+        normalized_query
+    ).strip()
+
+    exam_general_routes = {
+        "what examinations are conducted at niu":
+            "are semester examinations conducted for all programmes?",
+
+        "what examinations are conducted in niu":
+            "are semester examinations conducted for all programmes?",
+
+        "what exams are conducted at niu":
+            "are semester examinations conducted for all programmes?"
+    }
+
+    if normalized_query in exam_general_routes:
+
+        target_question = exam_general_routes[
+            normalized_query
+        ]
+
+        questions_clean = (
+            faq_df["question"]
+            .astype(str)
+            .str.lower()
+            .str.strip()
+            .str.replace(
+                r"[^a-z0-9\s]",
+                "",
+                regex=True
+            )
+            .str.replace(
+                r"\s+",
+                " ",
+                regex=True
+            )
+            .str.strip()
+        )
+
+        target_clean = re.sub(
+            r"[^a-z0-9\s]",
+            "",
+            target_question
+        )
+
+        match = faq_df[
+            questions_clean == target_clean
+        ]
+
+        if not match.empty:
+            matched_index = match.index[0]
+
+            print(
+                "🔥 GENERAL EXAM ROUTER HIT:",
+                faq_df.loc[
+                    matched_index,
+                    "question"
+                ]
+            )
+
+            return matched_index, 1.0
     
 
     # =========================================================
