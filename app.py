@@ -80,7 +80,7 @@ def load_faq_dataset():
     # Remove empty questions/answers
     df = df[
         (df["question"] != "") &
-        (df["answer"] != "")
+        (df["answer"] != "")FF
     ]
 
     # Remove exact duplicate questions
@@ -1903,71 +1903,71 @@ def find_best_match(user_question):
             ):
                 return i, 1.0
     # =========================================================
-    # 9. INTENT-SPECIFIC CONSISTENCY
+    # Intent-specific consistency
     # =========================================================
-    intent_terms = {
 
+    intent_terms = {
         "Admissions & Eligibility": [
-            "eligibility",
-            "eligible",
-            "requirement",
-            "qualification",
-            "marks",
-            "percentage",
-            "12",
-            "admission",
-            "apply"
+            "eligibility", "eligible", "requirement",
+            "qualification", "marks", "percentage",
+            "12", "admission", "apply"
         ],
 
         "Fees & Scholarships": [
-            "fee",
-            "fees",
-            "cost",
-            "tuition",
-            "amount",
-            "payment",
-            "scholarship"
+            "fee", "fees", "cost", "tuition",
+            "amount", "payment", "scholarship",
+            "scholarships", "financial aid"
         ],
 
         "Placements & Internships": [
-            "placement",
-            "career",
-            "job",
-            "recruitment",
-            "internship",
-            "package"
+            "placement", "career", "job",
+            "recruitment", "internship", "package"
         ],
 
         "Hostel": [
-            "hostel",
-            "accommodation",
-            "room",
-            "residence",
-            "stay"
+            "hostel", "accommodation", "room",
+            "residence", "stay"
         ],
 
         "Transport": [
-            "transport",
-            "bus",
-            "route"
+            "transport", "transportation",
+            "bus", "route"
         ],
 
         "Courses & Programs": [
-            "course",
-            "program",
-            "programme",
-            "specialization",
-            "offer",
-            "available"
+            "course", "courses", "program",
+            "programs", "programme", "programmes",
+            "specialization", "offer", "available",
+            "study", "degree"
+        ],
+
+        "Medical / NIIMS": [
+            "niims", "hospital", "medical",
+            "health", "doctor", "emergency"
+        ],
+
+        "Online / ERP / LMS": [
+            "online", "erp", "lms",
+            "portal", "login"
+        ],
+
+        "Examinations & Academics": [
+            "exam", "examination", "examinations",
+            "semester", "marks", "attendance",
+            "result", "results", "academic",
+            "academics"
+        ],
+
+        "Campus & Facilities": [
+            "campus", "facility", "facilities",
+            "library", "gym", "sports", "wifi"
         ]
     }
 
     if intent in intent_terms:
-
         for i, faq_question in enumerate(
             faq_df["processed_question"]
         ):
-
             overlap = sum(
                 1
                 for term in intent_terms[intent]
@@ -1975,9 +1975,21 @@ def find_best_match(user_question):
                 and term in faq_question
             )
 
-            adjusted_scores[i] += (
-                0.015 * overlap
-            )
+            adjusted_scores[i] += 0.015 * overlap
+
+        # Give a controlled boost when the user's
+        # question clearly belongs to a recognized category.
+        weak_intents = {
+            "Fees & Scholarships",
+            "Courses & Programs",
+            "Medical / NIIMS",
+            "Online / ERP / LMS",
+            "Examinations & Academics",
+            "Campus & Facilities"
+        }
+
+        if intent in weak_intents:
+            adjusted_scores[category_mask] += 0.15
     # =========================================================
     # 10. BEST MATCH
     # =========================================================
