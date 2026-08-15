@@ -1224,6 +1224,80 @@ def detect_intent(user_question):
 
 def find_best_match(user_question):
     """Hybrid + TF-IDF + semantic + lexical FAQ retrieval."""
+
+     # ========================================================
+    # GENERAL EXAMINATION QUESTION ROUTER
+    # ========================================================
+
+    normalized_query = re.sub(
+        r"[^a-z0-9\s]",
+        "",
+        str(user_question).lower()
+    )
+
+    normalized_query = re.sub(
+        r"\s+",
+        " ",
+        normalized_query
+    ).strip()
+
+    exam_mapping = {
+        "what examinations are conducted at niu":
+            "Are semester examinations conducted for all programmes?",
+
+        "what examinations are conducted in niu":
+            "Are semester examinations conducted for all programmes?",
+
+        "what exams are conducted at niu":
+            "Are semester examinations conducted for all programmes?"
+    }
+
+    if normalized_query in exam_mapping:
+
+        target_question = exam_mapping[
+            normalized_query
+        ]
+
+        questions_clean = (
+            faq_df["question"]
+            .astype(str)
+            .str.lower()
+            .str.strip()
+            .str.replace(
+                r"[^a-z0-9\s]",
+                "",
+                regex=True
+            )
+            .str.replace(
+                r"\s+",
+                " ",
+                regex=True
+            )
+            .str.strip()
+        )
+
+        target_clean = re.sub(
+            r"[^a-z0-9\s]",
+            "",
+            target_question.lower()
+        )
+
+        match = faq_df[
+            questions_clean == target_clean
+        ]
+
+        if not match.empty:
+            matched_index = match.index[0]
+
+            print(
+                "🔥 GENERAL EXAM ROUTER HIT:",
+                faq_df.loc[
+                    matched_index,
+                    "question"
+                ]
+            )
+
+            return matched_index, 1.0
     # =========================================================
     # EXACT FAQ MATCH
     # =========================================================
